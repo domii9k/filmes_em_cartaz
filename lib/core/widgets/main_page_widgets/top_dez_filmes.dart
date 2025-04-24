@@ -14,15 +14,15 @@ class _TopDezFilmes extends State<TopDezFilmes> {
       child: CarouselSlider(
         items: [
 
-          // Item 1
+          // item 1
           SizedBox(
             width: 120,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Poster do filme
+                // poster do filme
                 Container(
-                  height: 216, // Altura fixa para o poster
+                  height: 216, // altura fixa para o poster
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12.0),
                     image: DecorationImage(

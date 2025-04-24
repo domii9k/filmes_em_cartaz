@@ -1,5 +1,5 @@
+import 'package:filmes_em_cartaz/core/widgets/root_page.dart';
 import 'package:flutter/material.dart';
-import 'package:filmes_em_cartaz/presentation/pages/main_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Movie App',
-      home: MainPage(),
+      home: RootPage(),
       debugShowCheckedModeBanner: false,
     );
   }
