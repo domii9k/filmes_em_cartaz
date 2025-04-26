@@ -16,9 +16,7 @@ class _MainPage extends State<MainPage> {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
-      child: Container(
-        decoration: const BoxDecoration(color: Color(0xFF121011)),
-        child: Padding(
+      child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           child: Column(
             children: [
@@ -95,7 +93,6 @@ class _MainPage extends State<MainPage> {
             ],
           ),
         ),
-      ),
     );
   }
 }
