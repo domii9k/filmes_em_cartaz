@@ -1,3 +1,4 @@
+import 'package:filmes_em_cartaz/presentation/pages/favorite.dart';
 import 'package:filmes_em_cartaz/presentation/pages/main_page.dart';
 import 'package:filmes_em_cartaz/presentation/pages/search_page.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class _RootPage extends State<RootPage> {
   );
 
   List<Widget> _pages() {
-    return [MainPage(), SearchPage(), SearchPage()];
+    return [MainPage(), SearchPage(), Favorite()];
   }
 
   List<PersistentBottomNavBarItem> _navBarItems() {
@@ -66,9 +67,9 @@ class _RootPage extends State<RootPage> {
         colorBehindNavBar: Colors.transparent,
         boxShadow: [
           BoxShadow(
-            /* color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            spreadRadius: 1 */
+            color: const Color.fromARGB(255, 232, 100, 100).withValues(alpha: 0.5),
+            blurRadius: 2,
+            spreadRadius: 1
           )
         ]
       ),
