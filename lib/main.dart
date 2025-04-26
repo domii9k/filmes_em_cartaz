@@ -12,8 +12,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Movie App',
-      home: RootPage(),
       debugShowCheckedModeBanner: false,
+      home: RootPage(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(0xFF121011),
+          brightness: Brightness.dark,
+        ),
+      ),
+
+      /* initialRoute: '/',
+      routes: {
+        '/': (context) => const MainPage(),
+        '/detail': (context) => const MovieDetailsPage()
+      }, */
+      
     );
   }
 }
