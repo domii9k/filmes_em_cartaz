@@ -36,8 +36,8 @@ class _RootPage extends State<RootPage> {
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.favorite),
-        title: "Favoritos",
+        icon: Icon(Icons.menu),
+        title: "Menu",
         textStyle: TextStyle(fontWeight: FontWeight.w500),
         activeColorPrimary: Colors.red,
         inactiveColorPrimary: Colors.grey,
