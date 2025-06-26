@@ -1,263 +1,316 @@
-import 'package:filmes_em_cartaz/core/widgets/movie_datails_widgets/elenco_carrossel.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class MovieDetailsPage extends StatefulWidget {
-  const MovieDetailsPage({super.key});
+  final Map<String, dynamic> movie;
+  
+  const MovieDetailsPage({super.key, required this.movie});
 
   @override
-  State<StatefulWidget> createState() => _MovieDatailsPage();
+  State<MovieDetailsPage> createState() => _MovieDetailsPageState();
 }
 
-class _MovieDatailsPage extends State<MovieDetailsPage> {
+class _MovieDetailsPageState extends State<MovieDetailsPage> {
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarBrightness: Brightness.light,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-      child: Scaffold(
-        body: Stack(
-          children: <Widget>[
-            Container(
-              height: 413,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.amber[400],
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(55),
-                  bottomRight: Radius.circular(55),
-                ),
+    final movie = widget.movie;
+    final posterUrl = 'https://image.tmdb.org/t/p/w500${movie['poster_path']}';
+    final backdropUrl = 'https://image.tmdb.org/t/p/original${movie['backdrop_path']}';
+
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          // AppBar com imagem de fundo
+          SliverAppBar(
+            expandedHeight: 250.0,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: backdropUrl,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(color: Colors.grey[800]),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    //voltar e mais opcoes
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () => {},
-                            style: ElevatedButton.styleFrom(
-                              shape: CircleBorder(),
-                              padding: EdgeInsets.all(20),
-                              backgroundColor: Color(0xFF121011),
-                              foregroundColor: Colors.redAccent[900],
-                            ),
-                            child: Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              color: Colors.white,
-                              weight: 10,
-                            ),
-                          ),
+            leading: IconButton(
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.arrow_back, color: Colors.white),
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+            actions: [
+              IconButton(
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Symbols.more_vert_rounded, color: Colors.white),
+                ),
+                onPressed: () {},
+              ),
+            ],
+          ),
 
-                          ElevatedButton(
-                            onPressed: () => {},
-                            style: ElevatedButton.styleFrom(
-                              shape: CircleBorder(),
-                              padding: EdgeInsets.all(20),
-                              backgroundColor: Color(0xFF121011),
-                              foregroundColor: Colors.redAccent[900],
+          // Corpo da página
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Cabeçalho com poster e informações básicas
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Poster do filme
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: CachedNetworkImage(
+                          imageUrl: posterUrl,
+                          height: 180,
+                          width: 120,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: Colors.grey[800],
+                            height: 180,
+                            width: 120,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Informações básicas
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              movie['title'] ?? movie['name'] ?? 'Sem título',
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            child: Icon(
-                              Symbols.more_vert_rounded,
-                              color: Colors.white,
-                              weight: 2000,
-                              opticalSize: 1,
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(Icons.star, color: Colors.amber, size: 20),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${movie['vote_average']?.toStringAsFixed(1) ?? 'N/A'}',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                const SizedBox(width: 16),
+                                Text(
+                                  _formatDuration(movie['runtime']),
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ],
                             ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _formatGenres(movie['genres']),
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _formatReleaseDate(movie['release_date'] ?? movie['first_air_date']),
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Botão de assistir
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Ação para assistir o filme
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.play_arrow, size: 24),
+                          SizedBox(width: 8),
+                          Text(
+                            'Assistir agora',
+                            style: TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 24),
 
-                    //detalhes do filme
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(height: 100),
-                            Container(
-                              height: 800,
-                              width: 356,
-                              decoration: BoxDecoration(
-                                color: Color(0xFF1E1E1E),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 30,
-                                ),
-                                child: Column(
-                                  children: <Widget>[
-                                    Column(
-                                      children: <Widget>[
-                                        Text(
-                                          'NOME DO FILME',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-
-                                        Text(
-                                          'GENERO DO FILME BLA BLA BLA BLA',
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                      ],
-                                    ),
-                                    Divider(
-                                      thickness: 1,
-                                      color: Colors.white54,
-                                    ),
-
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 15),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text('Classificação'),
-                                                  Text('L'),
-                                                ],
-                                              ),
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text('Duração'),
-                                                  Text('1hr30min'),
-                                                ],
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text('Lançamento'),
-                                                  Text('20/04/2025'),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-
-                                          SizedBox(height: 10),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text('Disponível em'),
-                                              Text('ENG, PTBR, PTPT'),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-
-                                    Divider(
-                                      thickness: 2,
-                                      color: Colors.white54,
-                                    ),
-
-                                    //sinopse
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 15),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Sinopse'),
-                                          Text(
-                                            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.',
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Divider(
-                                      thickness: 2,
-                                      color: Colors.white54,
-                                    ),
-
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 15),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Trailers'),
-                                          Container(
-                                            margin: EdgeInsets.only(top: 10, bottom: 10),
-                                            height: 200,
-                                            width: 300,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0),
-                                              image: DecorationImage(
-                                                image: NetworkImage(
-                                                  'https://m.media-amazon.com/images/I/31J9SblmIjL.png',
-                                                ),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-
-                                    Divider(
-                                      thickness: 2,
-                                      color: Colors.white54,
-                                    ),
-
-                                    //elenco
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 15),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Elenco'),
-                                          ElencoCarrossel(),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 100),
-                          ],
-                        ),
-                      ),
+                  // Sinopse
+                  const Text(
+                    'Sinopse',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
-                    //comprar
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    movie['overview'] ?? 'Sinopse não disponível',
+                    style: const TextStyle(fontSize: 16, height: 1.5),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Informações técnicas
+                  const Text(
+                    'Informações',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildInfoRow('Data de lançamento', _formatReleaseDate(movie['release_date'] ?? movie['first_air_date'])),
+                  _buildInfoRow('Duração', _formatDuration(movie['runtime'])),
+                  _buildInfoRow('Classificação', _getAgeRating(movie['adult'])),
+                  _buildInfoRow('Idiomas', _formatLanguages(movie['spoken_languages'])),
+                  const SizedBox(height: 24),
+
+                  // Trailers (se disponível)
+                  if (movie['videos']?['results'] != null && movie['videos']['results'].isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Trailers',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          height: 200,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: movie['videos']['results'].length,
+                            itemBuilder: (context, index) {
+                              final video = movie['videos']['results'][index];
+                              return Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 16),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                      'https://img.youtube.com/vi/${video['key']}/hqdefault.jpg',
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: IconButton(
+                                    icon: const Icon(Icons.play_circle_filled, size: 50, color: Colors.white),
+                                    onPressed: () {
+                                      // Abrir trailer
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDuration(int? minutes) {
+    if (minutes == null) return 'N/A';
+    final hours = minutes ~/ 60;
+    final remainingMinutes = minutes % 60;
+    return '${hours}h ${remainingMinutes}m';
+  }
+
+  String _formatGenres(List<dynamic>? genres) {
+    if (genres == null || genres.isEmpty) return 'N/A';
+    return genres.map<String>((g) => g['name']).join(', ');
+  }
+
+  String _formatReleaseDate(String? date) {
+    if (date == null) return 'N/A';
+    final parsedDate = DateTime.tryParse(date);
+    if (parsedDate == null) return 'N/A';
+    return '${parsedDate.day}/${parsedDate.month}/${parsedDate.year}';
+  }
+
+  String _formatLanguages(List<dynamic>? languages) {
+    if (languages == null || languages.isEmpty) return 'N/A';
+    return languages.map<String>((l) => l['english_name']).join(', ');
+  }
+
+  String _getAgeRating(bool? adult) {
+    return adult == true ? '18+' : 'Livre';
   }
 }
