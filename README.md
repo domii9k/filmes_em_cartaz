@@ -10,13 +10,12 @@ O Filmes Em Cartaz é um aplicativo desenvolvido em Flutter que se conecta à AP
 
 ## 🚨 Considerações
 
-Neste primeiro bimestre, o projeto conta com apenas as páginas:
+Neste **segundo bimestre**, o projeto conta com apenas as páginas:
 
-- Início
-- Buscar
-- Detalhes
+- **Início**: Página de início do aplicativo.
+- **Buscar**: permite buscar filmes pelo título, mais popular, mais votado, mais recente e mais antigo.
+- **Detalhes**: exibe informações sobre o filme selecionado.
 
-Para o segundo bimestre, será otimizado as páginas e realizado a conexão com a API do TMDB. Além da adição de rotas para melhor fluxo entre as páginas.
 
 ## 🎨 Inspiração
 
