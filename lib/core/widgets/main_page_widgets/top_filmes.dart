@@ -19,10 +19,11 @@ class TopMoviesCarousel extends StatefulWidget {
 }
 
 class _TopMoviesCarouselState extends State<TopMoviesCarousel> {
-  int _currentIndex = 0;
-
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size; // capturando o tamanho da tela
+    final responsive = screenSize.width; // adicionando o tamanho da tela em uma variavel
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -30,8 +31,8 @@ class _TopMoviesCarouselState extends State<TopMoviesCarousel> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
             widget.title,
-            style: const TextStyle(
-              fontSize: 20,
+            style: TextStyle(
+              fontSize: responsive >= 600 ? 35 : 20,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -47,25 +48,20 @@ class _TopMoviesCarouselState extends State<TopMoviesCarousel> {
                 return _buildMovieCard(movie, index);
               },
               options: CarouselOptions(
-                height: 280,
-                viewportFraction: 0.35,
+                height: 280, // tamanho do carrossel
+                viewportFraction: responsive >= 600 ? 0.10 : 0.35, // gap entre os filmes
                 enlargeCenterPage: false,
-                autoPlay: true,
-                autoPlayInterval: const Duration(seconds: 3),
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
+                autoPlay: true, // movimentacao automatica
+                autoPlayInterval: const Duration(seconds: 3), // tempo de deslizamento automatico
               ),
             ),
-            const SizedBox(height: 10),
           ],
         ),
       ],
     );
   }
 
+  // Card do carrossel
   Widget _buildMovieCard(MovieModel movie, int index) {
     return GestureDetector(
       onTap: () {
@@ -86,17 +82,21 @@ class _TopMoviesCarouselState extends State<TopMoviesCarousel> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
+
+                  // Imagem do filme
                   child: CachedNetworkImage(
                     imageUrl: 'https://image.tmdb.org/t/p/w500${movie.posterPath}',
                     height: 200,
                     width: 120,
                     fit: BoxFit.cover,
+                    // Carregando a imagem
                     placeholder: (context, url) => Container(
                       color: Colors.grey[800],
-                      height: 200,
+                      height: 500,
                       width: 120,
                       child: const Center(child: CircularProgressIndicator()),
                     ),
+                    // Erro ao nao carregar a imagem
                     errorWidget: (context, url, error) => Container(
                       color: Colors.grey[800],
                       height: 200,
@@ -105,6 +105,8 @@ class _TopMoviesCarouselState extends State<TopMoviesCarousel> {
                     ),
                   ),
                 ),
+
+                // Button player
                 Positioned(
                   bottom: 8,
                   right: 8,
@@ -138,6 +140,8 @@ class _TopMoviesCarouselState extends State<TopMoviesCarousel> {
               ],
             ),
             const SizedBox(height: 8),
+
+            // Titulo do filme
             SizedBox(
               width: 120,
               child: Text(
@@ -152,14 +156,16 @@ class _TopMoviesCarouselState extends State<TopMoviesCarousel> {
                 textAlign: TextAlign.center,
               ),
             ),
+
+            // Avaliacao do filme
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(Icons.star, color: Colors.yellow, size: 16),
-                SizedBox(width: 4),
+              children: [
+                const Icon(Icons.star, color: Colors.yellow, size: 16),
+                const SizedBox(width: 4),
                 Text(
-                  'N/A', // Você pode adicionar voteAverage ao MovieModel se necessário
-                  style: TextStyle(
+                  movie.voteAvarage > 0 ? movie.voteAvarage.toString() : 'N/A',
+                  style: const TextStyle(
                     fontSize: 12,
                     color: Colors.white70,
                   ),

@@ -10,7 +10,7 @@ class MovieModel {
   final String? backdropPath;
   final int? runtime;
   final bool? adult;
-  final String? voteAvarage;
+  final double voteAvarage;
 
 
   
@@ -26,7 +26,7 @@ class MovieModel {
     this.backdropPath,
     this.runtime,
     this.adult,
-    this.voteAvarage
+    required this.voteAvarage  
   });
 
   String get fullTitle => title ?? name ?? 'Sem título';

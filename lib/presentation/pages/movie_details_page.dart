@@ -5,20 +5,26 @@ import 'package:filmes_em_cartaz/models/movie_model.dart';
 
 class MovieDetailsPage extends StatelessWidget {
   final MovieModel movie;
-  
+
   const MovieDetailsPage({super.key, required this.movie});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final posterUrl = 'https://image.tmdb.org/t/p/w500${movie.posterPath}'; //url do poster do filme
-    final backdropUrl = 'https://image.tmdb.org/t/p/original${movie.backdropPath}'; //url da imagem de fundo do filme
+    final posterUrl =
+        'https://image.tmdb.org/t/p/w500${movie.posterPath}'; //url do poster do filme
+    final backdropUrl =
+        'https://image.tmdb.org/t/p/original${movie.backdropPath}'; //url da imagem de fundo do filme
+    final screenSize =
+        MediaQuery.of(context).size; // capturando o tamanho da tela
+    final responsive =
+        screenSize.width; // adicionando o tamanho da tela em uma variavel
 
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          _buildAppBar(backdropUrl, context), //AppBar com imagem de fundo 
-          _buildMovieDetails(posterUrl, theme), //Detalhes do filme
+          _buildAppBar(backdropUrl, context), //AppBar com imagem de fundo
+          _buildMovieDetails(posterUrl, theme, responsive), //Detalhes do filme
         ],
       ),
     );
@@ -66,6 +72,7 @@ class MovieDetailsPage extends StatelessWidget {
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
+              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.5),
               shape: BoxShape.circle,
             ),
@@ -77,7 +84,7 @@ class MovieDetailsPage extends StatelessWidget {
     );
   }
 
-  SliverToBoxAdapter _buildMovieDetails(String posterUrl, ThemeData theme) {
+  SliverToBoxAdapter _buildMovieDetails(String posterUrl, ThemeData theme, final responsive) {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -86,7 +93,7 @@ class MovieDetailsPage extends StatelessWidget {
           children: [
             _buildMovieHeader(posterUrl, theme),
             const SizedBox(height: 24),
-            _buildWatchButton(),
+            _buildWatchButton(responsive),
             const SizedBox(height: 24),
             _buildSectionTitle('Sinopse', theme),
             const SizedBox(height: 8),
@@ -97,20 +104,24 @@ class MovieDetailsPage extends StatelessWidget {
             const SizedBox(height: 24),
             _buildSectionTitle('Informações', theme),
             const SizedBox(height: 8),
-            _buildInfoRow('Data de lançamento', _formatReleaseDate(movie.releaseDate ?? movie.firstAirDate)),
+            _buildInfoRow(
+              'Data de lançamento',
+              _formatReleaseDate(movie.releaseDate ?? movie.firstAirDate),
+            ),
             _buildInfoRow('Classificação', _getAgeRating(movie.adult)),
             /* if (movie.videos?.results.isNotEmpty ?? false) ...[ //se tiver videos/trailer
               const SizedBox(height: 24),
               _buildTrailersSection(theme), // seção de trailer do filme
             ], */
-            SizedBox(height: 100,)
+            SizedBox(height: 100),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMovieHeader(String posterUrl, ThemeData theme) { // cabeçalho do filme
+  Widget _buildMovieHeader(String posterUrl, ThemeData theme) {
+    // cabeçalho do filme
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -121,11 +132,9 @@ class MovieDetailsPage extends StatelessWidget {
             height: 180,
             width: 120,
             fit: BoxFit.cover,
-            placeholder: (context, url) => Container(
-              color: Colors.grey[800],
-              height: 180,
-              width: 120,
-            ),
+            placeholder:
+                (context, url) =>
+                    Container(color: Colors.grey[800], height: 180, width: 120),
           ),
         ),
         const SizedBox(width: 16),
@@ -145,7 +154,7 @@ class MovieDetailsPage extends StatelessWidget {
                   const Icon(Icons.star, color: Colors.amber, size: 20),
                   const SizedBox(width: 4),
                   Text(
-                    movie.voteAvarage ?? 'N/A',
+                    movie.voteAvarage.toString() ?? 'N/A',
                     style: theme.textTheme.bodyLarge,
                   ),
                 ],
@@ -164,29 +173,26 @@ class MovieDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildWatchButton() {
+  Widget _buildWatchButton(final responsive) {
     return SizedBox(
-      width: double.infinity,
+      width: responsive >= 600 ? 400 : double.infinity,
       child: ElevatedButton(
         onPressed: () {
           // botao para assistir o filme
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.redAccent,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: EdgeInsets.symmetric(vertical: responsive >= 600 ? 20 : 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.play_arrow, size: 24),
+            Icon(Icons.play_arrow, size: 24, color: Colors.white),
             SizedBox(width: 8),
-            Text(
-              'Assistir agora',
-              style: TextStyle(fontSize: 16),
-            ),
+            Text('Comprar Ingressos', style: TextStyle(fontSize: responsive >= 600 ? 20 : 16, color: Colors.white)),
           ],
         ),
       ),
@@ -196,9 +202,7 @@ class MovieDetailsPage extends StatelessWidget {
   Widget _buildSectionTitle(String title, ThemeData theme) {
     return Text(
       title,
-      style: theme.textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
+      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 
@@ -212,18 +216,10 @@ class MovieDetailsPage extends StatelessWidget {
             width: 120,
             child: Text(
               label,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 16))),
         ],
       ),
     );

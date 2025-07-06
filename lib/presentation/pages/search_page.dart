@@ -184,6 +184,8 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size; // capturando o tamanho da tela
+    final responsive = screenSize.width; // adicionando o tamanho da tela em uma variavel
     // Toda a tela
     return Scaffold(
       backgroundColor: Colors.black,
@@ -195,6 +197,7 @@ class _SearchPageState extends State<SearchPage> {
             floating: true,
             backgroundColor: Colors.black,
             title: Container(
+              margin: responsive >= 600 ? EdgeInsets.symmetric(horizontal: 50) : EdgeInsets.symmetric(horizontal: 0),
               height: 45,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 30, 30, 30),
@@ -297,9 +300,9 @@ class _SearchPageState extends State<SearchPage> {
               padding: const EdgeInsets.all(16),
               // Grade dos filmes
               sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
                   // Quantos filmes por linha
-                  crossAxisCount: 3,
+                  crossAxisCount: responsive >= 600 ? 7 : 3,
                   // Espacamento horizontal entre os filmes
                   crossAxisSpacing: 16,
                   // Espacamento vertical entre os filmes
