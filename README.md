@@ -7,6 +7,8 @@ O Filmes Em Cartaz é um aplicativo desenvolvido em Flutter que se conecta à AP
 - Dart
 - Flutter
 - Visual Studio Code
+- TMDb API
+- Provider
 
 ## 🚨 Considerações
 
@@ -30,3 +32,5 @@ Para meu aprendizado, utilizei algumas fontes de estudo.
 - <a href='https://www.youtube.com/watch?v=7oIAs-0G4mw&pp=0gcJCYQJAYcqIYzv'>Flutter Image</a>
 - <a href='https://www.youtube.com/watch?v=liEGSeD3Zt8'>Flutter Stack</a>
 - <a href='https://www.youtube.com/watch?v=2DX0TtM9Hug'>Flutter Forms</a>
+
+Link site hospedado: https://domii9k.github.io/filmes_em_cartaz/
